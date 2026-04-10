@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Roles disponibles en la app
+enum Role {
+  USER
+  ADMIN
+}
+
+// Usuarios importados desde ReqRes y guardados localmente
+model User {
+  id        Int      @id // Usamos el mismo ID que viene de ReqRes
+  email     String   @unique
+  firstName String
+  lastName  String
+  avatar    String
+  role      Role     @default(USER)
+  savedAt   DateTime @default(now())
+  posts     Post[]
+}
+
+// Posts creados por los usuarios guardados
+model Post {
+  id           String   @id @default(cuid())
+  title        String
+  content      String
+  authorUserId Int
+  author       User     @relation(fields: [authorUserId], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
